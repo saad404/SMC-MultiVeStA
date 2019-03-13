@@ -8,6 +8,7 @@ using namespace dice;
 
 int one, two, three, four, five, six = 0;
 int rolls_performed = 0;
+double rate = 1.0;
 
 int steps = 10;
 
@@ -30,16 +31,18 @@ void roll_dice() {
     rolls_performed++;
 }
    
-    time_t time_now() {
-        return time(0);
-    }
+//    time_t time_now() {
+//        return time(0);
+//    }
 
 //increment time by number from exponential distribution, otherwise 10
 JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceSimulatorState_getTime(JNIEnv *env, jobject obj) {
-    time_t now = time_now();
-    jdouble ret = (jdouble) now;
+    //time_t now = time_now();
+    jdouble x = ((jdouble) rand()) / (RAND_MAX) + 1;
+    jdouble ret = 0.0;
+    ret += -(log(sample_x))/rate;
     dice::cout << "Native method called: getTime() " << dice::endl;
-    dice::cout << "Will return " << now << dice::endl;
+    dice::cout << "Time: " << ret << dice::endl;
     return ret;
 }
 

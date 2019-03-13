@@ -1,16 +1,15 @@
 package tests;
 
-import jnisimulator.CoinFlipJNISimulatorState;
-import jnisimulator.CoinFlipWrapper;
+import jnisimulator.*;
 import vesta.mc.ParametersForState;
 
-public class MyMain {
+public class MyMainDice {
 	static {
-		System.loadLibrary("coinflib");
+		System.loadLibrary("diceroll");
 	}
 
 	public static void main(String[] args) {
-		CoinFlipJNISimulatorState SimuState = new CoinFlipJNISimulatorState(new ParametersForState("none", ""));
+		DiceJNISimulatorState SimuState = new DiceJNISimulatorState(new ParametersForState("none", ""));
 		for (int i = 0; i < 2; i++) {
 			for (int seed = 0; seed < 2; seed++) {
 				SimuState.setSimulatorForNewSimulation(seed);
@@ -30,8 +29,7 @@ public class MyMain {
 				
 			}
 		}
-		
-		
+
 	}
 
 }

@@ -5,11 +5,11 @@ import vesta.mc.ParametersForState;
 
 public class CoinFlipJNISimulatorState extends NewState {
 	
-	private CoinFlipSimulatorState simulator;
+	private CoinFlipWrapper simulator;
 
 	public CoinFlipJNISimulatorState(ParametersForState parameters) {
 		super(parameters);
-		simulator = new CoinFlipSimulatorState(55);
+		simulator = new CoinFlipWrapper(55);
 	}
 	
 	public double getTime() {

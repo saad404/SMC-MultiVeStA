@@ -1,13 +1,13 @@
 package jnisimulator;
 
-import vesta.mc.ParametersForState;
 
-public class CoinFlipSimulatorState {
+
+public class CoinFlipWrapper {
 //	static {
 //		System.loadLibrary("libcoinflip");
 //	}
 	
-	public CoinFlipSimulatorState(int bias) {
+	public CoinFlipWrapper(int bias) {
 		setBias(bias);
 		// TODO Auto-generated constructor stub
 	}
