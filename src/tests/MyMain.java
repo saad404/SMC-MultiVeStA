@@ -25,7 +25,6 @@ public class MyMain {
 //					SimuState.performWholeSimulation();
 //					SimuState.rval(1);
 //					SimuState.rval("1");
-					
 				}
 				
 			}

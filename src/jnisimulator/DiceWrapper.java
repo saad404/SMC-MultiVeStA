@@ -1,7 +1,5 @@
 package jnisimulator;
 
-import vesta.mc.ParametersForState;
-
 public class DiceWrapper {
 	
 	public native double getTime();

@@ -1,11 +1,6 @@
 package jnisimulator;
 
-
-
 public class CoinFlipWrapper {
-//	static {
-//		System.loadLibrary("libcoinflip");
-//	}
 	
 	public CoinFlipWrapper(int bias) {
 		setBias(bias);

@@ -18,10 +18,12 @@ public class DiceJNISimulatorState extends NewState {
 
 	public void performOneStepOfSimulation() {
 		simulator.performOneStepOfSimulation();
+		incrementNumberOfSteps(); //will run 16 times
 	}
 	
 	public void performWholeSimulation() {
 		simulator.performWholeSimulation();
+		setNumberOfSteps(10);
 	}
 	
 	public void setSimulatorForNewSimulation(int seed) {

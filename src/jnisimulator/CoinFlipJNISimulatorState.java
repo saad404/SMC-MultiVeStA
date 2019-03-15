@@ -18,10 +18,12 @@ public class CoinFlipJNISimulatorState extends NewState {
 
 	public void performOneStepOfSimulation() {
 		simulator.performOneStepOfSimulation();
+		incrementNumberOfSteps(); //increments steps for the both iterations, so will run 16 times
 	}
 
 	public void performWholeSimulation() {
 		simulator.performWholeSimulation();
+		setNumberOfSteps(10); // needs to be setup in C++ side as well
 	}
 
 	public void setSimulatorForNewSimulation(int seed) {
@@ -29,9 +31,7 @@ public class CoinFlipJNISimulatorState extends NewState {
 	}
 
 	public double rval(int obs) {
-
 		return simulator.rval(obs);
-		
 	}
 
 	public double rval(String obs) {

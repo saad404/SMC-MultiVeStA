@@ -1,16 +1,17 @@
 #include <jni.h>
 #include <iostream>
-#include "include/jnisimulator_DiceSimulatorState.h"
+#include "include/jnisimulator_DiceWrapper.h"
 #include <random>
 #include <string.h>
 
-using namespace dice;
+using namespace std;
 
 int one, two, three, four, five, six = 0;
 int rolls_performed = 0;
 double rate = 1.0;
+double cur_time = 0.0;
 
-int steps = 10;
+int no_steps = 10;
 
 void roll_dice() {
     int roll = rand() % 6 + 1;
@@ -36,136 +37,129 @@ void roll_dice() {
 //    }
 
 //increment time by number from exponential distribution, otherwise 10
-JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceSimulatorState_getTime(JNIEnv *env, jobject obj) {
+JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceWrapper_getTime(JNIEnv *env, jobject obj) {
     //time_t now = time_now();
-    jdouble x = ((jdouble) rand()) / (RAND_MAX) + 1;
-    jdouble ret = 0.0;
-    ret += -(log(sample_x))/rate;
-    dice::cout << "Native method called: getTime() " << dice::endl;
-    dice::cout << "Time: " << ret << dice::endl;
-    return ret;
+    jdouble sample_x = ((jdouble) rand()) / (RAND_MAX) + 1;
+    cur_time += -(log(sample_x))/rate;
+    std::cout << "Native method called: getTime() " << std::endl;
+    std::cout << "Time: " << cur_time << std::endl;
+    return cur_time;
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_DiceSimulatorState_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
-    dice::cout << "Native method called: performOneStepOfSimulation() " << dice::endl;
+JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
+    std::cout << "Native method called: performOneStepOfSimulation() " << std::endl;
 
     roll_dice();
-    dice::cout << "Native method called: values after performOneStepOfSimulation()" << dice::endl;
-    dice::cout << "\trolled one: " << one << dice::endl;
-    dice::cout << "\trolled two: " << two << dice::endl;
-    dice::cout << "\trolled three: " << three << dice::endl;
-    dice::cout << "\trolled four: " << four << dice::endl;
-    dice::cout << "\trolled five: " << five << dice::endl;
-    dice::cout << "\trolled six: " << six << dice::endl;
-    dice::cout << "\trolls performed: " << rolls_performed << dice::endl;
+    std::cout << "Native method called: values after performOneStepOfSimulation()" << std::endl;
+//    std::cout << "\trolled one: " << one << std::endl;
+//    std::cout << "\trolled two: " << two << std::endl;
+//    std::cout << "\trolled three: " << three << std::endl;
+//    std::cout << "\trolled four: " << four << std::endl;
+//    std::cout << "\trolled five: " << five << std::endl;
+//    std::cout << "\trolled six: " << six << std::endl;
+//    std::cout << "\trolls performed: " << rolls_performed << std::endl;
 
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_DiceSimulatorState_performWholeSimulation(JNIEnv *env, jobject obj) {
-    dice::cout << "Native method called: performWholeSimulation() " << dice::endl;
+JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_performWholeSimulation(JNIEnv *env, jobject obj) {
+    std::cout << "Native method called: performWholeSimulation() " << std::endl;
 
-    for (int i = 0; i < steps; i++) {
+    for (int i = 0; i < no_steps; i++) {
         roll_dice();
     }
 
-    dice::cout << "Native method called: values after performWholeSimulation() " << dice::endl;
-    dice::cout << "\trolled one: " << one << dice::endl;
-    dice::cout << "\trolled two: " << two << dice::endl;
-    dice::cout << "\trolled three: " << three << dice::endl;
-    dice::cout << "\trolled four: " << four << dice::endl;
-    dice::cout << "\trolled five: " << five << dice::endl;
-    dice::cout << "\trolled six: " << six << dice:endl;
-    dice::cout << "\trolls performed: " << rolls_performed << dice::endl;
+    std::cout << "Native method called: values after performWholeSimulation() " << std::endl;
+    std::cout << "\trolled one: " << one << std::endl;
+    std::cout << "\trolled two: " << two << std::endl;
+    std::cout << "\trolled three: " << three << std::endl;
+    std::cout << "\trolled four: " << four << std::endl;
+    std::cout << "\trolled five: " << five << std::endl;
+    std::cout << "\trolled six: " << six << std::endl;
+    std::cout << "\trolls performed: " << rolls_performed << std::endl;
 
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_DiceSimulatorState_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
-    dice::cout << "Native method called: setSimulatorForNewSimulation() " << dice::endl;
+JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
+    std::cout << "Native method called: setSimulatorForNewSimulation() " << std::endl;
 
     srand(seed);
     one, two, three, four, five, six = 0;
     rolls_performed = 0;
 
-    dice::cout << "Native method called: values after setSimulatorForNewSimulation()" << dice::endl;
-    dice::cout << "\trolled one: " << one << dice::endl;
-    dice::cout << "\trolled two: " << two << dice::endl;
-    dice::cout << "\trolled three: " << three << dice::endl;
-    dice::cout << "\trolled four: " << four << dice::endl;
-    dice::cout << "\trolled five: " << five << dice::endl;
-    dice::cout << "\trolled six: " << six << dice::endl;
-    dice::cout << "\trolls performed: " << rolls_performed << dice::endl;
+    std::cout << "Native method called: values after setSimulatorForNewSimulation()" << std::endl;
+    std::cout << "\trolled one: " << one << std::endl;
+    std::cout << "\trolled two: " << two << std::endl;
+    std::cout << "\trolled three: " << three << std::endl;
+    std::cout << "\trolled four: " << four << std::endl;
+    std::cout << "\trolled five: " << five << std::endl;
+    std::cout << "\trolled six: " << six << std::endl;
+    std::cout << "\trolls performed: " << rolls_performed << std::endl;
 }
 
-JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceSimulatorState_rval__I(JNIEnv *env, jobject obj, jint obs) {
-    dice::cout << "Native method called: rval(int) " << obs << dice::endl;
+JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceWrapper_rval__I(JNIEnv *env, jobject obj, jint obs) {
+    std::cout << "Native method called: rval(int) " << obs << std::endl;
     jdouble ret;
-    switch (obs) {
-        case 1:
-            ret = (jdouble)time_now();
-            break;
-        case 2:
-            ret = steps;
-            break;
-        case 3:
-            ret = one;
-            break;
-        case 4:
-            ret = two;
-            break;
-        case 5:
-            ret = three;
-            break;
-        case 6:
-            ret = four;
-            break;
-        case 7:
-            ret = five;
-            break;
-        case 8:
-            ret = six;
-            break;
-        case 9:
-            ret = rolls_performed;
-            break;
-        case 10:
-            ret = 0.0;
-            break;
-    }
+//    switch (obs) {
+//        case 1:
+//            ret = (jdouble)time_now();
+//            break;
+//        case 2:
+//            ret = steps;
+//            break;
+//        case 3:
+//            ret = one;
+//            break;
+//        case 4:
+//            ret = two;
+//            break;
+//        case 5:
+//            ret = three;
+//            break;
+//        case 6:
+//            ret = four;
+//            break;
+//        case 7:
+//            ret = five;
+//            break;
+//        case 8:
+//            ret = six;
+//            break;
+//        case 9:
+//            ret = rolls_performed;
+//            break;
+//        case 10:
+//            ret = 0.0;
+//            break;
+//    }
     
     return ret;
 }
 
-JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceSimulatorState_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
+JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceWrapper_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
     jdouble ret = 0.0;
     const char *path = env -> GetStringUTFChars(obs, NULL);
-    dice::cout << "Native method called: rval(string) " << path << dice::endl;
+    std::cout << "Native method called: rval(string) " << path << std::endl;
     env -> ReleaseStringUTFChars(obs, NULL);
 
-    if(strcmp(path, "1") == 0) {
-        ret = (jdouble)time_now();
-    }
-    if(strcmp(path, "2") == 0) {
-        ret = steps;
-    }
-    if(strcmp(path, "3") == 0) {
+    if(strcmp(path, "one") == 0) {
         ret = one;
     }
-    if(strcmp(path, "4") == 0) {
+    if(strcmp(path, "two") == 0) {
         ret = two;
     }
-    if(strcmp(path, "5") == 0) {
+    if(strcmp(path, "three") == 0) {
         ret = three;
     }
-    if(strcmp(path, "6") == 0) {
+    if(strcmp(path, "four") == 0) {
         ret = four;
     }
-    if(strcmp(path, "7") == 0) {
+    if(strcmp(path, "five") == 0) {
         ret = five;
     }
-    if(strcmp(path, "8") == 0) {
+    if(strcmp(path, "six") == 0) {
         ret = six;
     }
-    if(strcmp(path, "9") == 0) {
+    if(strcmp(path, "rolls_performed") == 0) {
         ret = rolls_performed;
     }
     return ret;
