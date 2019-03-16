@@ -5,6 +5,10 @@ import vesta.mc.ParametersForState;
 
 public class CoinFlipJNISimulatorState extends NewState {
 	
+	static {
+		System.loadLibrary("coinflib");
+	}
+	
 	private CoinFlipWrapper simulator;
 
 	public CoinFlipJNISimulatorState(ParametersForState parameters) {
@@ -18,7 +22,7 @@ public class CoinFlipJNISimulatorState extends NewState {
 
 	public void performOneStepOfSimulation() {
 		simulator.performOneStepOfSimulation();
-		incrementNumberOfSteps(); //increments steps for the both iterations, so will run 16 times
+	//	incrementNumberOfSteps(); //increments steps for the both iterations, so will run 16 times
 	}
 
 	public void performWholeSimulation() {
