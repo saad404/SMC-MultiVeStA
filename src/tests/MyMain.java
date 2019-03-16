@@ -1,13 +1,10 @@
 package tests;
 
 import jnisimulator.CoinFlipJNISimulatorState;
-import jnisimulator.CoinFlipWrapper;
 import vesta.mc.ParametersForState;
 
 public class MyMain {
-	static {
-		System.loadLibrary("coinflib");
-	}
+	
 
 	public static void main(String[] args) {
 		CoinFlipJNISimulatorState SimuState = new CoinFlipJNISimulatorState(new ParametersForState("none", ""));
@@ -25,6 +22,7 @@ public class MyMain {
 //					SimuState.performWholeSimulation();
 //					SimuState.rval(1);
 //					SimuState.rval("1");
+					
 				}
 				
 			}
