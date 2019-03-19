@@ -1,7 +1,7 @@
 package tests;
 
 import jnisimulator.CoinFlipJNISimulatorState;
-import jnisimulator.CoinFlipWrapper;
+
 import vesta.mc.ParametersForState;
 
 public class MyMain {

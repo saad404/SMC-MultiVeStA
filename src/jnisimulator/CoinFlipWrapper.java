@@ -2,11 +2,11 @@ package jnisimulator;
 
 public class CoinFlipWrapper {
 	
-	public CoinFlipWrapper(int bias) {
+	public CoinFlipWrapper(double bias) {
 		setBias(bias);
 		// TODO Auto-generated constructor stub
 	}
-	public native void setBias(int bias);
+	public native void setBias(double bias);
 	public native double getTime();
 	public native void performOneStepOfSimulation();
 	public native void performWholeSimulation();

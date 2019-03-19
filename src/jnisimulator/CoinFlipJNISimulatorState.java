@@ -8,6 +8,10 @@ public class CoinFlipJNISimulatorState extends NewState {
 		System.loadLibrary("coinflib");
 	}
 	
+	static {
+		System.loadLibrary("coinflib");
+	}
+	
 	private CoinFlipWrapper simulator;
 
 	public CoinFlipJNISimulatorState(ParametersForState parameters) {

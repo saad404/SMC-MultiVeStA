@@ -1,7 +1,7 @@
 #include <jni.h>       // JNI header provided by JDK
 #include <iostream>    // C++ standard IO header
 //#include "include/tests_MyMain.h"  // Generated
-#include "include/jnisimulator_CoinFlipSimulatorState.h"
+#include "include/jnisimulator_CoinFlipWrapper.h"
 #include <random>
 #include <time.h>
 #include <string.h>
@@ -9,10 +9,15 @@
 using namespace std;
 
 int heads = 0;
+int head_limit = 0;
 int tails = 0;
 int flips_performed = 0;
+int biasFactor = 55;
+int steps = 0;
+double cur_time = 0.0;
+double rate = 1.0;
 
-int NO_STEPS = 10; // number of total steps for performWholeSimulation
+int NO_STEPS = 10; // number of total steps for performWholeSimulation - already done
 
 // this is not a JNI method but will be used by jni methods - not put in h file as h file can be
 // regenerated
@@ -20,8 +25,9 @@ int NO_STEPS = 10; // number of total steps for performWholeSimulation
 // transform 55 into a variable named bias
 // do a method in reset which takes an input integer and sets the bias
 void flip_coin() {
-	int flip = rand() % 100 + 1;
-	if(flip <= 55) { // head
+	head_limit = RAND_MAX * biasFactor;
+	int flip = rand();
+	if(flip <= head_limit) { // head
 		heads++;
 	}
 	else {
@@ -29,6 +35,7 @@ void flip_coin() {
 	}
 	// increased number of flips perfomed
 	flips_performed++;
+
 }
 
 // this is not a JNI method but will be used by jni methods - not put in h file as h file can be
@@ -37,27 +44,29 @@ void flip_coin() {
 //	return time(0);
 //}
 
-JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipSimulatorState_getTime(JNIEnv *env, jobject obj) {
+
+JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipWrapper_getTime(JNIEnv *env, jobject obj) {
 	// get current time based on
 
-	jdouble ret = 0.0;//(jdouble)now;
 	std::cout << "Native method called: getTime() " << std::endl;
+	jdouble sample_x = ((double) rand() / (RAND_MAX)) + 1;
+	cur_time += (-log(sample_x)) / rate;
 	//std::cout << "Will return  " << now << std::endl;
-	return ret;
+	return cur_time;
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipSimulatorState_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipWrapper_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
 	std::cout << "Native method called: performOneStepOfSimulation() " << std::endl;
 
 	flip_coin();
 
 	std::cout << "Native method called: values after performOneStepOfSimulation()" << std::endl;
-	std::cout << "\theads(" << heads << ")" << std::endl;
-	std::cout << "\ttails(" << tails << ")" << std::endl;
-	std::cout << "\tflips_performed(" << flips_performed << ")" << std::endl;
+//	std::cout << "\theads(" << heads << ")" << std::endl;
+//	std::cout << "\ttails(" << tails << ")" << std::endl;
+//	std::cout << "\tflips_performed(" << flips_performed << ")" << std::endl;
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipSimulatorState_performWholeSimulation(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipWrapper_performWholeSimulation(JNIEnv *env, jobject obj) {
 	std::cout << "Native method called: performWholeSimulation() " << std::endl;
 
 	for(int i = 0; i < NO_STEPS; i++) {
@@ -71,7 +80,7 @@ JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipSimulatorState_performWholeSimu
 
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipSimulatorState_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
+JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
 	std::cout << "Native method called: setSimulatorForNewSimulation() " << std::endl;
 
 	// initialize random seed
@@ -79,6 +88,7 @@ JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipSimulatorState_setSimulatorForN
 	heads = 0;
 	tails = 0;
 	flips_performed = 0;
+	cur_time = 0.0;
 
 	std::cout << "Native method called: values after setSimulatorForNewSimulation()" << std::endl;
 	std::cout << "\theads(" << heads << ")" << std::endl;
@@ -86,7 +96,7 @@ JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipSimulatorState_setSimulatorForN
 	std::cout << "\tflips_performed(" << flips_performed << ")" << std::endl;
 }
 
-JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipSimulatorState_rval__I(JNIEnv *env, jobject obj, jint obs) {
+JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipWrapper_rval__I(JNIEnv *env, jobject obj, jint obs) {
 	std::cout << "Native method called: rval(int) " << obs << std::endl;
 	jdouble ret = 0.0;
 //	switch(obs) {
@@ -113,7 +123,7 @@ JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipSimulatorState_rval__I(JNIEn
 	return ret;
 }
 
-JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipSimulatorState_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
+JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipWrapper_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
 	jdouble ret = 0.0;
 	const char *path = env -> GetStringUTFChars(obs, NULL);
 	std::cout << "Native method called: sval(string) " << path << std::endl;
@@ -121,7 +131,8 @@ JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipSimulatorState_rval__Ljava_l
 
 	if(strcmp(path, "time") == 0) {
 		//ret = (jdouble)time_now();
-		ret = Java_jnisimulator_CoinFlipSimulatorState_getTime(env, obj);
+		//ret = Java_jnisimulator_CoinFlipSimulatorState_getTime(env, obj);
+		ret = cur_time;
 	}
 
 	if(strcmp(path, "heads") == 0) {
@@ -133,7 +144,14 @@ JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipSimulatorState_rval__Ljava_l
 	if(strcmp(path, "flips_performed") == 0) {
 		ret = flips_performed;
 	}
+//	if(strcmp(path, "steps") == 0) {
+//		ret = flips_performed;
+//	}
 	return ret;
+}
+
+JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipWrapper_setBias(JNIEnv *end, jobject object, jdouble bias) {
+	biasFactor = bias;
 }
 
 

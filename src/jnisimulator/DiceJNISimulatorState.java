@@ -8,6 +8,10 @@ public class DiceJNISimulatorState extends NewState {
 		System.loadLibrary("diceroll");
 	}
 	
+	static {
+		System.loadLibrary("diceroll");
+	}
+	
 	private DiceWrapper simulator;
 	
 	public DiceJNISimulatorState(ParametersForState parameters) {
@@ -22,6 +26,7 @@ public class DiceJNISimulatorState extends NewState {
 	public void performOneStepOfSimulation() {
 		simulator.performOneStepOfSimulation();
 		//incrementNumberOfSteps(); //will run 16 times
+
 	}
 	
 	public void performWholeSimulation() {
