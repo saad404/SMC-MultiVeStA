@@ -1,0 +1,2 @@
+stepsAtStep(x) = if { s.rval("steps") == x } then { s.rval("steps") } else # stepsAtStep({x}) fi ;
+eval parametric(E[ stepsAtStep(x) ],x,0.0,1.0,50.0) ;

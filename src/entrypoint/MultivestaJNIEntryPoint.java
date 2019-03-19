@@ -8,7 +8,7 @@ public class MultivestaJNIEntryPoint {
 			String[] mvargs = {
 					"-c", 
 					"-sm", "false", 
-					"-sd", "jnisimulator.DiceJNISimulatorState",
+					"-sd", "jnisimulator.CoinFlipJNISimulatorState",
 					"-bs", "20", 
 					"-l", "oneLocal", 
 					"-f", "stepsAfterXSteps.quatex", 

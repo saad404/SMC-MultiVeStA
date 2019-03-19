@@ -4,10 +4,6 @@ import jnisimulator.*;
 import vesta.mc.ParametersForState;
 
 public class MyMainDice {
-	static {
-		System.loadLibrary("diceroll");
-	}
-
 	public static void main(String[] args) {
 		DiceJNISimulatorState SimuState = new DiceJNISimulatorState(new ParametersForState("none", ""));
 		for (int i = 0; i < 2; i++) {

@@ -9,6 +9,7 @@
 using namespace std;
 
 int heads = 0;
+int head_limit = 0;
 int tails = 0;
 int flips_performed = 0;
 int biasFactor = 55;
@@ -24,8 +25,9 @@ int NO_STEPS = 10; // number of total steps for performWholeSimulation - already
 // transform 55 into a variable named bias
 // do a method in reset which takes an input integer and sets the bias
 void flip_coin() {
-	int flip = rand() % 100 + 1;
-	if(flip <= biasFactor) { // head
+	head_limit = RAND_MAX * biasFactor;
+	int flip = rand();
+	if(flip <= head_limit) { // head
 		heads++;
 	}
 	else {
@@ -142,13 +144,13 @@ JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipWrapper_rval__Ljava_lang_Str
 	if(strcmp(path, "flips_performed") == 0) {
 		ret = flips_performed;
 	}
-	if(strcmp(path, "steps") == 0) {
-		ret = flips_performed;
-	}
+//	if(strcmp(path, "steps") == 0) {
+//		ret = flips_performed;
+//	}
 	return ret;
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipWrapper_setBias(JNIEnv *end, jobject object, jint bias) {
+JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipWrapper_setBias(JNIEnv *end, jobject object, jdouble bias) {
 	biasFactor = bias;
 }
 

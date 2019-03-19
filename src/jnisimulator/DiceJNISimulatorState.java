@@ -4,6 +4,9 @@ import vesta.mc.NewState;
 import vesta.mc.ParametersForState;
 
 public class DiceJNISimulatorState extends NewState {
+	static {
+		System.loadLibrary("diceroll");
+	}
 	
 	private DiceWrapper simulator;
 	
@@ -18,12 +21,12 @@ public class DiceJNISimulatorState extends NewState {
 
 	public void performOneStepOfSimulation() {
 		simulator.performOneStepOfSimulation();
-		incrementNumberOfSteps(); //will run 16 times
+		//incrementNumberOfSteps(); //will run 16 times
 	}
 	
 	public void performWholeSimulation() {
 		simulator.performWholeSimulation();
-		setNumberOfSteps(10);
+		//setNumberOfSteps(10);
 	}
 	
 	public void setSimulatorForNewSimulation(int seed) {
