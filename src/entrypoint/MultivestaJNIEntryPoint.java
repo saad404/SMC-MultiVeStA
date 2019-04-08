@@ -8,12 +8,12 @@ public class MultivestaJNIEntryPoint {
 			String[] mvargs = {
 					"-c", 
 					"-sm", "false", 
-					"-sd", "jnisimulator.CoinFlipJNISimulatorState",
+					"-sd", "jnisimulator.DiceJNISimulatorState",
 					"-bs", "20", 
 					"-l", "oneLocal", 
 					"-f", "stepsAfterXSteps.quatex", 
-					"-a", "0.1", 
-					"-ds", "[0.1]"
+					"-a", "0.5", 
+					"-d1", "0.5"
 			};
 			UniqueEntryPoint.main(mvargs);
 		}

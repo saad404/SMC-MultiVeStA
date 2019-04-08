@@ -6,7 +6,13 @@
 
 using namespace std;
 
-int one, two, three, four, five, six = 0;
+int one = 0;
+int two = 0;
+int three = 0;
+int four = 0;
+int five = 0;
+int six = 0;
+
 int rolls_performed = 0;
 double rate = 1.0;
 double cur_time = 0.0;
@@ -83,7 +89,12 @@ JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_setSimulatorForNewSimulatio
     std::cout << "Native method called: setSimulatorForNewSimulation() " << std::endl;
 
     srand(seed);
-    one, two, three, four, five, six = 0;
+    one = 0;
+	two = 0;
+	three = 0;
+	four = 0;
+	five = 0;
+	six = 0;
     rolls_performed = 0;
 
     std::cout << "Native method called: values after setSimulatorForNewSimulation()" << std::endl;

@@ -12,7 +12,7 @@ int heads = 0;
 int head_limit = 0;
 int tails = 0;
 int flips_performed = 0;
-int biasFactor = 55;
+double biasFactor = 55;
 int steps = 0;
 double cur_time = 0.0;
 double rate = 1.0;
@@ -61,9 +61,9 @@ JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipWrapper_performOneStepOfSimulat
 	flip_coin();
 
 	std::cout << "Native method called: values after performOneStepOfSimulation()" << std::endl;
-//	std::cout << "\theads(" << heads << ")" << std::endl;
-//	std::cout << "\ttails(" << tails << ")" << std::endl;
-//	std::cout << "\tflips_performed(" << flips_performed << ")" << std::endl;
+	std::cout << "\theads(" << heads << ")" << std::endl;
+	std::cout << "\ttails(" << tails << ")" << std::endl;
+	std::cout << "\tflips_performed(" << flips_performed << ")" << std::endl;
 }
 
 JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipWrapper_performWholeSimulation(JNIEnv *env, jobject obj) {
@@ -91,9 +91,9 @@ JNIEXPORT void JNICALL Java_jnisimulator_CoinFlipWrapper_setSimulatorForNewSimul
 	cur_time = 0.0;
 
 	std::cout << "Native method called: values after setSimulatorForNewSimulation()" << std::endl;
-	std::cout << "\theads(" << heads << ")" << std::endl;
-	std::cout << "\ttails(" << tails << ")" << std::endl;
-	std::cout << "\tflips_performed(" << flips_performed << ")" << std::endl;
+//	std::cout << "\theads(" << heads << ")" << std::endl;
+//	std::cout << "\ttails(" << tails << ")" << std::endl;
+//	std::cout << "\tflips_performed(" << flips_performed << ")" << std::endl;
 }
 
 JNIEXPORT jdouble JNICALL Java_jnisimulator_CoinFlipWrapper_rval__I(JNIEnv *env, jobject obj, jint obs) {
