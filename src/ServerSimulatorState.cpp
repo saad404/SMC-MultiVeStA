@@ -18,7 +18,10 @@ typedef double TimeType;
 //define constants
 const int TEST_SIZE = 15;
 const int NUM_TASKS = 6;
+const int NUM_NAMES = 6;
 //some strings
+string firstNames[NUM_NAMES] = {"Task","Task","Task","Task","Task","Task"};
+string lastNames[NUM_NAMES] = {"1","2","3","4","5","6"};
 //
 const int SIM_LENGTH = 100;
 const int MAX_DURATION = 20;
@@ -60,7 +63,7 @@ private:
     //list here
     priority_queue<EventStruct, vector<EventStruct>, compareEventTime> eventQ;
     queue<EventStruct> serverQueue;
-    TimeType curTime = 0.0;
+    TimeType GT = 0.0;
     bool debugger = false;
     int serversAvailable = NUM_SERVERS;
 public:
@@ -74,6 +77,8 @@ public:
     int getSizeOfQ();
     void resetQ();
 }; //end ServerSimulatorState
+
+ServerSimulatorState servsim;
 
 void ServerSimulatorState::addEvent(EventStruct & event) {
     if (debugger) {
@@ -101,17 +106,18 @@ void ServerSimulatorState::printServerNumberChange() {
 }
 
 void ServerSimulatorState::runSim() {
-    while (!eventQ.empty()) {
+    if (!eventQ.empty()) {
         EventStruct nextEvent = eventQ.top();
-        curTime = nextEvent.eventTime;
+        GT = nextEvent.eventTime;
         eventQ.pop();
         switch (nextEvent.event) {
-        case ARRIVAL:
+        case ARRIVAL: //when a task arrives, schedule arrival of new task and serve task
             if (serversAvailable) {
             	//enter served event in eventQ
-            	nextEvent.eventTime = curTime + nextEvent.duration;
-            	nextEvent.event = SERVED;
-            	addEvent(nextEvent);
+            	EventStruct servedEvent;
+            	servedEvent.eventTime = GT + nextEvent.duration;
+            	servedEvent.event = SERVED;
+            	addEvent(servedEvent);
             	serversAvailable--;
             	printServerNumberChange();
             } else {
@@ -122,8 +128,8 @@ void ServerSimulatorState::runSim() {
         case SERVED:
         	if(!serverQueue.empty()) {
         		EventStruct nextTask = serverQueue.front();
-        		serverQueue.pop();
-        		nextTask.eventTime = curTime + nextEvent.duration;
+        		serverQueue.pop(); //fix below as done above
+        		nextTask.eventTime = GT + nextEvent.duration;
         		nextTask.event = SERVED;
         		addEvent(nextTask);
         	} else {
@@ -134,6 +140,18 @@ void ServerSimulatorState::runSim() {
         default:
         	cout << "ERROR: default should never be reached" << endl;
         }
+    }
+    ServerSimulatorState servsim;
+    servsim.activateDebug(true);
+    EventStruct myEvent;
+    cout << "Adding " << TEST_SIZE << " events. \n \n";
+    for (int i = 0; i < TEST_SIZE; i++) {
+    	myEvent.taskName = firstNames[rand()%NUM_NAMES] + string(" ")
+    			+ lastNames[rand()%NUM_NAMES];
+    	myEvent.eventTime = servsim.getGT();
+    	myEvent.duration = rand()%MAX_DURATION+1;
+    	myEvent.event = ARRIVAL;
+    	servsim.addEvent(myEvent);
     }
 }
 
@@ -154,23 +172,20 @@ void ServerSimulatorState::resetQ() {
 }
 
 JNIEXPORT jdouble JNICALL Java_jnisimulator_ServerWrapper_getTime(JNIEnv *env, jobject obj) { //advanceTime
-	ServerSimulatorState servsim;
-	jdouble sample_x = ((jdouble) rand()) / (RAND_MAX) + 1;
-	jdouble simulatedTime = GT;
-	simulatedTime += -(log(sample_x)) / 0.1;
-	servsim.setGT(simulatedTime);
-	return servsim.getGT();
+//	jdouble sample_x = ((jdouble) rand()) / (RAND_MAX) + 1;
+//	jdouble simulatedTime = GT;
+//	simulatedTime += -(log(sample_x)) / 0.1;
+//	servsim.setGT(simulatedTime);
+	return GT;
 }
 
 JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
-	ServerSimulatorState servsim;
 	std::cout << "Native method called: performOneStepOfSimulation" << endl;
 	servsim.runSim();
 	std::cout << "after it's been called" << endl;
 }
 
 JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_performWholeSimulation(JNIEnv *env, jobject obj) {
-	ServerSimulatorState servsim;
 	for(int i = 0; i < SIM_LENGTH; i++) {
 		servsim.runSim();
 	}
@@ -178,13 +193,11 @@ JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_performWholeSimulation(JN
 
 JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
 	srand(seed);
-	ServerSimulatorState servsim;
 	servsim.resetQ();
 	GT = 0.0;
 }
 
 JNIEXPORT jdouble JNICALL Java_jnisimulator_ServerWrapper_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
-    ServerSimulatorState servsim;
 	jdouble ret = 0.0;
     const char *path = env -> GetStringUTFChars(obs, NULL);
     std::cout << "Native method called: rval(string) " << path << std::endl;
