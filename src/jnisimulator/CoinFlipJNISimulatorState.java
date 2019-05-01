@@ -4,9 +4,6 @@ import vesta.mc.NewState;
 import vesta.mc.ParametersForState;
 
 public class CoinFlipJNISimulatorState extends NewState {
-	static {
-		System.loadLibrary("coinflib");
-	}
 	
 	static {
 		System.loadLibrary("coinflib");
