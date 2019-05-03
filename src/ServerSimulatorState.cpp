@@ -24,16 +24,17 @@ const TimeType THRESHOLD = 100.0;
 //string lastNames[NUM_NAMES] = {"1","2","3","4","5","6"};
 //
 string firstNames[NUM_NAMES] =
-    { "Alice", "Ambroise", "Bert", "Denise", "Larry", "Emily" , "John", "Charlie", "Dean", "Eli", "Fabian", "Gary", "Harry", "Ian", "Kevin"};
+    { "Alice", "Bill", "Jeff", "Susan", "Larry", "Emily" , "John", "Charlie", "Dean", "Eli", "Fabian", "Gary", "Harry", "Ian", "Kevin"};
 string lastNames[NUM_NAMES] =
-    { "Ghosh", "Jones", "Lee", "Smith", "Zhang", "Zuckerman" , "Wick", "Austin", "James", "Sorensen", "Rodriguez", "Lineker", "Potter", "McKellen", "Costner"};
+    { "Johnson", "Gates", "Bezos", "Wojcicki", "Ellison", "Adams" , "Wick", "Austin", "James", "Sorensen", "Rodriguez", "Lineker", "Potter", "McKellen", "Costner"};
 
 const int SIM_LENGTH = 100;
 const int MAX_DURATION = 12;
 const int NUM_SERVERS = 2;
+const double RATE_EXP = 0.1;
 int serversAvailable = NUM_SERVERS;
-TimeType GT = 0.0;
-TimeType simulatedTime = 0.0;
+//TimeType GT = 0.0;
+//TimeType simulatedTime = 0.0;
 
 //define event types
 enum EventType {ARRIVAL, SERVED};
@@ -70,7 +71,7 @@ private:
     priority_queue<EventStruct, vector<EventStruct>, compareEventTime> eventQ;
     //wait queue: q with waiting tasks queued by arrival time
     queue<EventStruct> serverQueue;
-    //TimeType GT = 0.0;
+    TimeType GT = 0.0;
     bool debugger = false;
     //int serversAvailable = NUM_SERVERS;
 public:
@@ -84,7 +85,7 @@ public:
     void setGT(double cur_time);
     int getSizeOfQ();
     void resetQ();
-    double advanceTime();
+    double sampleInterarrivalTime();
 }; //end ServerSimulatorState
 
 ServerSimulatorState servsim;
@@ -114,63 +115,71 @@ void ServerSimulatorState::printServerNumberChange() {
     }
 }
 
-double ServerSimulatorState::advanceTime() {
-	double sample_x = ((jdouble) rand()) / (RAND_MAX) + 1; // rand: random number between 0 to RAND_MAX. sample_x: random number between 1 to 2
-	//simulatedTime += -(log(sample_x))  / 0.1;  // log(1) = 0, log(2) = 0.69, 0/0.1 = 0, 0.69/0.1 = 6.9 -> -0 to -6.9
-	simulatedTime += (log(sample_x))  / 0.1;  // log(1) = 0, log(2) = 0.69, 0/0.1 = 0, 0.69/0.1 = 6.9 -> -0 to -6.9
-	return simulatedTime;
+double ServerSimulatorState::sampleInterarrivalTime() {
+	double sample_x = ((jdouble) rand()) / (RAND_MAX); // rand: random number between 0 to RAND_MAX. sample_x: random number between 0 and 1
+	return -(log(sample_x))  / RATE_EXP;  // log(1) = 0, log(2) = 0.69, 0/0.1 = 0, 0.69/0.1 = 6.9 -> 0 to -6.9
 }
 
 void ServerSimulatorState::runSim() {
 	if (!eventQ.empty() && GT < THRESHOLD) {
         EventStruct nextEvent = eventQ.top();
-        GT = nextEvent.eventTime;
+        servsim.setGT(nextEvent.eventTime);
         eventQ.pop();
         switch (nextEvent.event) {
-        case ARRIVAL: //when a task arrives, schedule arrival of new task and serve task
-            if (serversAvailable) {
-            	//enter served event in eventQ
-            	//EventStruct servedEvent;
-            	//servsim.setGT(servedEvent.eventTime = GT + nextEvent.duration);
-            	nextEvent.eventTime = GT + nextEvent.duration;
-            	nextEvent.event = SERVED;
-            	addEvent(nextEvent);
-            	serversAvailable--;
-            	printServerNumberChange();
-            } else {
-            	//no servers available
-            	addServerQueueTask(nextEvent);
-            }
-            break;
-        	case SERVED:
-        	if(!serverQueue.empty()) {
-        		EventStruct nextTask = serverQueue.front();
-        		serverQueue.pop(); //fix below as done above
-        		nextTask.eventTime = GT + nextTask.duration;
-        		//servsim.setGT(nextTask.eventTime = GT + nextEvent.duration);
-        		nextTask.event = SERVED;
-        		addEvent(nextTask);
-        	} else {
-        		serversAvailable++;
-        		printServerNumberChange();
+        case ARRIVAL:
+        	{ //when a task arrives, schedule arrival of new task and serve task
+				if (serversAvailable) {
+					//enter served event in eventQ
+					//EventStruct servedEvent;
+					//servsim.setGT(servedEvent.eventTime = GT + nextEvent.duration);
+					EventStruct futureEvent;
+					futureEvent.eventTime = servsim.getGT() + nextEvent.duration;
+					futureEvent.event = SERVED;
+					addEvent(futureEvent);
+					//nextEvent.eventTime = GT + nextEvent.duration;
+					//nextEvent.event = SERVED;
+					//addEvent(nextEvent);
+					serversAvailable--;
+					printServerNumberChange();
+				} else {
+					//no servers available
+					addServerQueueTask(nextEvent);
+				}
+				//create an event that represents the arrival of the new task, add event to addEvent
+				EventStruct nextArrival;
+				nextArrival.eventTime = servsim.getGT() + servsim.sampleInterarrivalTime();
+				nextArrival.event = ARRIVAL;
+				nextArrival.duration = rand() % MAX_DURATION + 1;
         	}
-        	break;
+            break;
+        case SERVED:
+        	{
+				if(!serverQueue.empty()) {
+					EventStruct nextTask = serverQueue.front();
+					serverQueue.pop(); //fix below as done above
+					nextTask.eventTime = servsim.getGT() + nextTask.duration;
+					//servsim.setGT(nextTask.eventTime = GT + nextEvent.duration);
+					nextTask.event = SERVED;
+					addEvent(nextTask);
+				} else {
+					serversAvailable++;
+					printServerNumberChange();
+				}
+        	}
+				break;
         default:
         	cout << "ERROR: default should never be reached" << endl;
         }
-    } else if (!serverQueue.empty()){
-
     }
-    //ServerSimulatorState servsim;
 
+}
+
+void ServerSimulatorState::setGT(double cur_time) {
+	GT = cur_time;
 }
 
 double ServerSimulatorState::getGT() {
     return GT;
-}
-
-void ServerSimulatorState::setGT(double cur_time) {
-    GT = cur_time;
 }
 
 int ServerSimulatorState::getSizeOfQ() {
@@ -200,20 +209,26 @@ JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_performWholeSimulation(JN
 JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
 	srand(seed);
 	servsim.resetQ();
-	GT = 0.0;
-	simulatedTime = 0.0;
+	servsim.setGT(0.0);
 	servsim.activateDebug(true);
 	EventStruct myEvent;
-	cout << "Adding " << TEST_SIZE << " events. \n \n";
-	for (int i = 0; i < TEST_SIZE; i++) { //populate queue with tasks
-		myEvent.taskName = firstNames[i] + string(" ")
-				+ lastNames[i];
-		myEvent.eventTime = servsim.advanceTime();
-		myEvent.duration = rand()%MAX_DURATION+1;
-		//cout << "duration: " << myEvent.duration << endl;
-		myEvent.event = ARRIVAL;
-		servsim.addEvent(myEvent);
-	}
+	//add just one arrival event
+	myEvent.taskName = firstNames[0] + string(" ") + lastNames[0];
+	myEvent.eventTime = servsim.getGT() + servsim.sampleInterarrivalTime();
+	myEvent.duration = rand() % MAX_DURATION + 1;
+	myEvent.event = ARRIVAL;
+	servsim.addEvent(myEvent);
+	cout << "Adding " << 1 << " event. \n \n";
+
+//	for (int i = 0; i < TEST_SIZE; i++) { //populate queue with tasks
+//		myEvent.taskName = firstNames[i] + string(" ")
+//				+ lastNames[i];
+//		myEvent.eventTime = servsim.advanceTime();
+//		myEvent.duration = rand()%MAX_DURATION+1;
+//		//cout << "duration: " << myEvent.duration << endl;
+//		myEvent.event = ARRIVAL;
+//		servsim.addEvent(myEvent);
+//	}
 }
 
 JNIEXPORT jdouble JNICALL Java_jnisimulator_ServerWrapper_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
