@@ -150,6 +150,7 @@ void ServerSimulatorState::runSim() {
 				nextArrival.eventTime = servsim.getGT() + servsim.sampleInterarrivalTime();
 				nextArrival.event = ARRIVAL;
 				nextArrival.duration = rand() % MAX_DURATION + 1;
+				addEvent(nextArrival);
         	}
             break;
         case SERVED:
