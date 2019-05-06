@@ -226,7 +226,7 @@ JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_setSimulatorForNewSimulat
 	servsim.activateDebug(true);
 	EventStruct myEvent;
 	//add just one arrival event
-	myEvent.taskName = firstNames[0] + string(" ") + lastNames[0];
+	myEvent.taskName = string("Task ") + servsim.genTaskNumber();//firstNames[0] + string(" ") + lastNames[0];
 	myEvent.eventTime = servsim.getGT() + servsim.sampleInterarrivalTime();
 	myEvent.duration = rand() % MAX_DURATION + 1;
 	myEvent.event = ARRIVAL;
