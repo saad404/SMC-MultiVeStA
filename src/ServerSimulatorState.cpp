@@ -6,6 +6,7 @@
 #include <queue>
 #include <jni.h>
 #include <random>
+#include <sstream>
 #include "include/jnisimulator_ServerWrapper.h"
 
 using namespace std;
@@ -23,10 +24,10 @@ const TimeType THRESHOLD = 100.0;
 //string firstNames[NUM_TASKS] = {"Task","Task","Task","Task","Task","Task"};
 //string lastNames[NUM_NAMES] = {"1","2","3","4","5","6"};
 //
-string firstNames[NUM_NAMES] =
-    { "Alice", "Bill", "Jeff", "Susan", "Larry", "Emily" , "John", "Charlie", "Dean", "Eli", "Fabian", "Gary", "Harry", "Ian", "Kevin"};
-string lastNames[NUM_NAMES] =
-    { "Johnson", "Gates", "Bezos", "Wojcicki", "Ellison", "Adams" , "Wick", "Austin", "James", "Sorensen", "Rodriguez", "Lineker", "Potter", "McKellen", "Costner"};
+//string firstNames[NUM_NAMES] =
+//    { "Alice", "Bill", "Jeff", "Susan", "Larry", "Emily" , "John", "Charlie", "Dean", "Eli", "Fabian", "Gary", "Harry", "Ian", "Kevin"};
+//string lastNames[NUM_NAMES] =
+//    { "Johnson", "Gates", "Bezos", "Wojcicki", "Ellison", "Adams" , "Wick", "Austin", "James", "Sorensen", "Rodriguez", "Lineker", "Potter", "McKellen", "Costner"};
 
 const int SIM_LENGTH = 100;
 const int MAX_DURATION = 12;
@@ -86,6 +87,7 @@ public:
     int getSizeOfQ();
     void resetQ();
     double sampleInterarrivalTime();
+    string genTaskNumber();
 }; //end ServerSimulatorState
 
 ServerSimulatorState servsim;
@@ -115,6 +117,13 @@ void ServerSimulatorState::printServerNumberChange() {
     }
 }
 
+string ServerSimulatorState::genTaskNumber() {
+	int taskNumber = rand() % 100 + 1;
+	ostringstream str1;
+	str1 << taskNumber;
+	return str1.str();
+}
+
 double ServerSimulatorState::sampleInterarrivalTime() {
 	double sample_x = ((jdouble) rand()) / (RAND_MAX); // rand: random number between 0 to RAND_MAX. sample_x: random number between 0 and 1
 	return -(log(sample_x))  / RATE_EXP;  // log(1) = 0, log(2) = 0.69, 0/0.1 = 0, 0.69/0.1 = 6.9 -> 0 to -6.9
@@ -135,6 +144,8 @@ void ServerSimulatorState::runSim() {
 					EventStruct futureEvent;
 					futureEvent.eventTime = servsim.getGT() + nextEvent.duration;
 					futureEvent.event = SERVED;
+					futureEvent.taskName = string("Task ") + servsim.genTaskNumber();
+					futureEvent.duration = rand() % MAX_DURATION + 1;
 					addEvent(futureEvent);
 					//nextEvent.eventTime = GT + nextEvent.duration;
 					//nextEvent.event = SERVED;
@@ -150,6 +161,7 @@ void ServerSimulatorState::runSim() {
 				nextArrival.eventTime = servsim.getGT() + servsim.sampleInterarrivalTime();
 				nextArrival.event = ARRIVAL;
 				nextArrival.duration = rand() % MAX_DURATION + 1;
+				nextArrival.taskName = string("Task ") + servsim.genTaskNumber();
 				addEvent(nextArrival);
         	}
             break;
