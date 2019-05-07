@@ -131,10 +131,10 @@ double ServerSimulatorState::sampleInterarrivalTime() {
 
 void ServerSimulatorState::runSim() {
 	if (!eventQ.empty() && GT < THRESHOLD) {
-        EventStruct nextEvent = eventQ.top();
-        servsim.setGT(nextEvent.eventTime);
+        EventStruct currentEvent = eventQ.top();
+        servsim.setGT(currentEvent.eventTime);
         eventQ.pop();
-        switch (nextEvent.event) {
+        switch (currentEvent.event) {
         case ARRIVAL:
         	{ //when a task arrives, schedule arrival of new task and serve task
 				if (serversAvailable) {
@@ -142,7 +142,7 @@ void ServerSimulatorState::runSim() {
 					//EventStruct servedEvent;
 					//servsim.setGT(servedEvent.eventTime = GT + nextEvent.duration);
 					EventStruct futureEvent;
-					futureEvent.eventTime = servsim.getGT() + nextEvent.duration;
+					futureEvent.eventTime = servsim.getGT() + currentEvent.duration;
 					futureEvent.event = SERVED;
 					futureEvent.taskName = string("Task ") + servsim.genTaskNumber();
 					futureEvent.duration = rand() % MAX_DURATION + 1;
@@ -154,7 +154,7 @@ void ServerSimulatorState::runSim() {
 					printServerNumberChange();
 				} else {
 					//no servers available
-					addServerQueueTask(nextEvent);
+					addServerQueueTask(currentEvent);
 				}
 				//create an event that represents the arrival of the new task, add event to addEvent
 				EventStruct nextArrival;
