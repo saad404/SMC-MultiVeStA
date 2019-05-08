@@ -29,6 +29,9 @@ const TimeType THRESHOLD = 100.0;
 //string lastNames[NUM_NAMES] =
 //    { "Johnson", "Gates", "Bezos", "Wojcicki", "Ellison", "Adams" , "Wick", "Austin", "James", "Sorensen", "Rodriguez", "Lineker", "Potter", "McKellen", "Costner"};
 
+int maxEvents = 0;
+int currentEventNumber = 0;
+
 const int SIM_LENGTH = 100;
 const int MAX_DURATION = 12;
 const int NUM_SERVERS = 2;
@@ -99,6 +102,7 @@ void ServerSimulatorState::addEvent(EventStruct & event) {
         cout << endl;
     }
     eventQ.push(event);
+    currentEventNumber++;
 }
 
 void ServerSimulatorState::addServerQueueTask(EventStruct & event) {
@@ -131,38 +135,41 @@ double ServerSimulatorState::sampleInterarrivalTime() {
 
 void ServerSimulatorState::runSim() {
 	if (!eventQ.empty() && GT < THRESHOLD) {
-        EventStruct nextEvent = eventQ.top();
-        servsim.setGT(nextEvent.eventTime);
+        EventStruct currentEvent = eventQ.top();
+        servsim.setGT(currentEvent.eventTime);
         eventQ.pop();
-        switch (nextEvent.event) {
+        switch (currentEvent.event) {
         case ARRIVAL:
         	{ //when a task arrives, schedule arrival of new task and serve task
 				if (serversAvailable) {
 					//enter served event in eventQ
 					//EventStruct servedEvent;
-					//servsim.setGT(servedEvent.eventTime = GT + nextEvent.duration);
+					//servsim.setGT(servedEvent.eventTime = GT + currentEvent.duration);
 					EventStruct futureEvent;
-					futureEvent.eventTime = servsim.getGT() + nextEvent.duration;
+					futureEvent.eventTime = servsim.getGT() + currentEvent.duration;
 					futureEvent.event = SERVED;
 					futureEvent.taskName = string("Task ") + servsim.genTaskNumber();
 					futureEvent.duration = rand() % MAX_DURATION + 1;
 					addEvent(futureEvent);
-					//nextEvent.eventTime = GT + nextEvent.duration;
-					//nextEvent.event = SERVED;
-					//addEvent(nextEvent);
+					//currentEvent.eventTime = GT + currentEvent.duration;
+					//currentEvent.event = SERVED;
+					//addEvent(currentEvent);
 					serversAvailable--;
 					printServerNumberChange();
 				} else {
 					//no servers available
-					addServerQueueTask(nextEvent);
+					addServerQueueTask(currentEvent);
 				}
-				//create an event that represents the arrival of the new task, add event to addEvent
-				EventStruct nextArrival;
-				nextArrival.eventTime = servsim.getGT() + servsim.sampleInterarrivalTime();
-				nextArrival.event = ARRIVAL;
-				nextArrival.duration = rand() % MAX_DURATION + 1;
-				nextArrival.taskName = string("Task ") + servsim.genTaskNumber();
-				addEvent(nextArrival);
+				if (currentEventNumber < maxEvents) {
+					//create an event that represents the arrival of the new task, add event to addEvent
+					EventStruct nextArrival;
+					nextArrival.eventTime = servsim.getGT() + servsim.sampleInterarrivalTime();
+					nextArrival.event = ARRIVAL;
+					nextArrival.duration = rand() % MAX_DURATION + 1;
+					nextArrival.taskName = string("Task ") + servsim.genTaskNumber();
+					addEvent(nextArrival);
+				}
+
         	}
             break;
         case SERVED:
@@ -171,7 +178,7 @@ void ServerSimulatorState::runSim() {
 					EventStruct nextTask = serverQueue.front();
 					serverQueue.pop(); //fix below as done above
 					nextTask.eventTime = servsim.getGT() + nextTask.duration;
-					//servsim.setGT(nextTask.eventTime = GT + nextEvent.duration);
+					//servsim.setGT(nextTask.eventTime = GT + currentEvent.duration);
 					nextTask.event = SERVED;
 					addEvent(nextTask);
 				} else {
@@ -219,11 +226,16 @@ JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_performWholeSimulation(JN
 	}
 }
 
+JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_setMaxNumberOfEvents(JNIEnv *env, jobject obj, jint maxNumberOfEvents) {
+	maxEvents = maxNumberOfEvents;
+}
+
 JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
 	srand(seed);
 	servsim.resetQ();
 	servsim.setGT(0.0);
 	servsim.activateDebug(true);
+	currentEventNumber = 0;
 	EventStruct myEvent;
 	//add just one arrival event
 	myEvent.taskName = string("Task ") + servsim.genTaskNumber();//firstNames[0] + string(" ") + lastNames[0];

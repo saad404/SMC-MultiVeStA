@@ -31,6 +31,10 @@ public class ServerJNISimulatorState extends NewState {
 		simulator.setSimulatorForNewSimulation(seed);
 	}
 	
+	public void setMaxNumberOfEvents(int maxNumberOfEvents) {
+		simulator.setMaxNumberOfEvents(maxNumberOfEvents);
+	}
+	
 	public double rval(int obs) {
 		return simulator.rval(obs);
 	}

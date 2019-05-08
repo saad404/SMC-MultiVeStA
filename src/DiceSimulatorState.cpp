@@ -43,7 +43,7 @@ void roll_dice() {
 //increment time by number from exponential distribution, otherwise 10
 JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceWrapper_getTime(JNIEnv *env, jobject obj) {
     //time_t now = time_now();
-    jdouble sample_x = ((jdouble) rand()) / (RAND_MAX) + 1;
+    jdouble sample_x = ((jdouble) rand()) / (RAND_MAX);
     cur_time += -(log(sample_x))/rate;
     std::cout << "Native method called: getTime() " << std::endl;
     std::cout << "Time: " << cur_time << std::endl;
