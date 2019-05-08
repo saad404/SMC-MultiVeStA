@@ -16,9 +16,9 @@ using namespace std;
 typedef double TimeType;
 
 //define constants
-const int TEST_SIZE = 15;
-const int NUM_TASKS = 6;
-const int NUM_NAMES = 15;
+//const int TEST_SIZE = 15;
+//const int NUM_TASKS = 6;
+//const int NUM_NAMES = 15;
 const TimeType THRESHOLD = 100.0;
 //some strings
 //string firstNames[NUM_TASKS] = {"Task","Task","Task","Task","Task","Task"};
