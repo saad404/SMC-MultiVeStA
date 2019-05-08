@@ -38,6 +38,8 @@ public class ServerJNISimulatorState extends NewState {
 	public double rval(String obs) {
 		if (obs.equals("steps")) {
 			return getNumberOfSteps();
+		} else if (obs.equals("time")) {
+			return getTime();
 		} else {
 			return simulator.rval(obs);
 		}
