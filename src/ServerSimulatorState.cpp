@@ -19,7 +19,7 @@ typedef double TimeType;
 //const int TEST_SIZE = 15;
 //const int NUM_TASKS = 6;
 //const int NUM_NAMES = 15;
-const TimeType THRESHOLD = 100.0;
+const TimeType THRESHOLD = 400.0;
 //some strings
 //string firstNames[NUM_TASKS] = {"Task","Task","Task","Task","Task","Task"};
 //string lastNames[NUM_NAMES] = {"1","2","3","4","5","6"};
@@ -131,6 +131,9 @@ double ServerSimulatorState::sampleInterarrivalTime() {
 }
 
 void ServerSimulatorState::runSim() {
+	if(GT >= THRESHOLD && eventQ.size() > 0) {
+		eventQ.pop();
+	}
 	if (!eventQ.empty() && GT < THRESHOLD) {
         EventStruct currentEvent = eventQ.top();
         servsim.setGT(currentEvent.eventTime);
