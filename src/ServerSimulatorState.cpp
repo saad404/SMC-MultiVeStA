@@ -89,6 +89,7 @@ public:
     double getGT(void);
     void setGT(double cur_time);
     int getSizeOfQ();
+    int getSizeOfWQ();
     void resetQ();
     double sampleInterarrivalTime();
     string genTaskNumber();
@@ -121,6 +122,7 @@ void ServerSimulatorState::printServerNumberChange() {
     }
 }
 
+// add EventStruct & to be parsed?
 void ServerSimulatorState::scheduleArrivedEvent(EventStruct & currentEvent) {
 	EventStruct futureEvent;
 	futureEvent.eventTime = servsim.getGT() + currentEvent.duration;
@@ -154,6 +156,7 @@ double ServerSimulatorState::sampleInterarrivalTime() {
 
 void ServerSimulatorState::runSim() {
 	// try to move if-statement at nextArrival and see if it works.
+	// It doesn't work. It will pop until size = 1 and then stop instead of 0.
 	if(servsim.getGT() >= THRESHOLD && eventQ.size() > 0) {
 		eventQ.pop();
 	}
@@ -219,6 +222,10 @@ double ServerSimulatorState::getGT() {
     return GT;
 }
 
+int ServerSimulatorState::getSizeOfWQ() {
+  return serverQueue.size();
+}
+
 int ServerSimulatorState::getSizeOfQ() {
   return eventQ.size();
 }
@@ -276,7 +283,10 @@ JNIEXPORT jdouble JNICALL Java_jnisimulator_ServerWrapper_rval__Ljava_lang_Strin
     if(strcmp(path, "size") == 0) {
         ret = servsim.getSizeOfQ();
     }
-
+    if(strcmp(path, "waitSize") == 0) {
+	// WQ = Waiting Queue
+	ret = servsim.getSizeOfWQ();
+    }
     return ret;
 }
 
