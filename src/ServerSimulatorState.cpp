@@ -32,6 +32,7 @@ const TimeType THRESHOLD = 400.0;
 const int SIM_LENGTH = 100;
 const int MAX_DURATION = 12;
 const int NUM_SERVERS = 2;
+// AVG_INTERARRIVAL_TIME -> 0 = "udskyder" tidspunktet hvor size() = 0
 const double AVG_INTERARRIVAL_TIME = 10;
 const double RATE_EXP = 1.0 / AVG_INTERARRIVAL_TIME;
 int serversAvailable = NUM_SERVERS;
@@ -82,6 +83,8 @@ public:
     void addServerQueueTask(EventStruct & event);
     void activateDebug(bool val) { debugger = val; };
     void printServerNumberChange();
+    void scheduleArrivedEvent(EventStruct & currentEvent);
+    void scheduleServedEvent();
     void runSim();
     double getGT(void);
     void setGT(double cur_time);
@@ -118,6 +121,25 @@ void ServerSimulatorState::printServerNumberChange() {
     }
 }
 
+void ServerSimulatorState::scheduleArrivedEvent(EventStruct & currentEvent) {
+	EventStruct futureEvent;
+	futureEvent.eventTime = servsim.getGT() + currentEvent.duration;
+	futureEvent.event = SERVED;
+	futureEvent.taskName = currentEvent.taskName;
+	addEvent(futureEvent);
+	serversAvailable--;
+	printServerNumberChange();
+}
+
+void ServerSimulatorState::scheduleServedEvent() {
+	EventStruct nextTask = serverQueue.front();
+	serverQueue.pop(); //fix below as done above
+	nextTask.eventTime = servsim.getGT() + nextTask.duration;
+	//servsim.setGT(nextTask.eventTime = GT + nextEvent.duration);
+	nextTask.event = SERVED;
+	addEvent(nextTask);
+}
+
 string ServerSimulatorState::genTaskNumber() {
 	int taskNumber = rand() % 100 + 1;
 	ostringstream str1;
@@ -131,10 +153,11 @@ double ServerSimulatorState::sampleInterarrivalTime() {
 }
 
 void ServerSimulatorState::runSim() {
-	if(servsim.getGT >= THRESHOLD && eventQ.size() > 0) {
+	// try to move if-statement at nextArrival and see if it works.
+	if(servsim.getGT() >= THRESHOLD && eventQ.size() > 0) {
 		eventQ.pop();
 	}
-	if (!eventQ.empty() && servsim.getGT < THRESHOLD) {
+	if (!eventQ.empty() && servsim.getGT() < THRESHOLD) {
         EventStruct currentEvent = eventQ.top();
         servsim.setGT(currentEvent.eventTime);
         eventQ.pop();
@@ -142,25 +165,25 @@ void ServerSimulatorState::runSim() {
         case ARRIVAL:
         	{ //when a task arrives, schedule arrival of new task and serve task
 				if (serversAvailable) {
-					//enter served event in eventQ
+					scheduleArrivedEvent(currentEvent);
 					//EventStruct servedEvent;
 					//servsim.setGT(servedEvent.eventTime = GT + nextEvent.duration);
-					EventStruct futureEvent;
-					futureEvent.eventTime = servsim.getGT() + currentEvent.duration;
-					futureEvent.event = SERVED;
-					futureEvent.taskName = string("Task ") + servsim.genTaskNumber();
-					futureEvent.duration = rand() % MAX_DURATION + 1;
-					addEvent(futureEvent);
+					// Put the following lines in a function and invoke instead. Call it scheduleServedEvent(currentEvent). Don't do a static method, instance method instead.
+					
+					
+					//string("Task ") + servsim.genTaskNumber();
+					//futureEvent.duration = rand() % MAX_DURATION + 1;
+
 					//nextEvent.eventTime = GT + nextEvent.duration;
 					//nextEvent.event = SERVED;
 					//addEvent(nextEvent);
-					serversAvailable--;
-					printServerNumberChange();
+
 				} else {
 					//no servers available
 					addServerQueueTask(currentEvent);
 				}
 				//create an event that represents the arrival of the new task, add event to addEvent
+				// add if here
 				EventStruct nextArrival;
 				nextArrival.eventTime = servsim.getGT() + servsim.sampleInterarrivalTime();
 				nextArrival.event = ARRIVAL;
@@ -172,12 +195,9 @@ void ServerSimulatorState::runSim() {
         case SERVED:
         	{
 				if(!serverQueue.empty()) {
-					EventStruct nextTask = serverQueue.front();
-					serverQueue.pop(); //fix below as done above
-					nextTask.eventTime = servsim.getGT() + nextTask.duration;
-					//servsim.setGT(nextTask.eventTime = GT + nextEvent.duration);
-					nextTask.event = SERVED;
-					addEvent(nextTask);
+					// Call scheduleServedEvent(currentEvent). Don't do a static method, instance method instead.
+					scheduleServedEvent();
+					
 				} else {
 					serversAvailable++;
 					printServerNumberChange();
@@ -259,5 +279,4 @@ JNIEXPORT jdouble JNICALL Java_jnisimulator_ServerWrapper_rval__Ljava_lang_Strin
 
     return ret;
 }
-
 
