@@ -1,5 +1,4 @@
-stepsAtStep(x) = if { s.rval("steps") == x } then { s.rval("steps") } else # stepsAtStep({x}) fi ;
-eval parametric(E[ stepsAtStep(x) ],x,0.0,1.0,50.0) ;
-// test cases: 
-// 1) "time" >= x then "size"
-// 2) "steps" == x then "size"
+waitSizeAtStep(x) = if { s.rval("steps") == x } then { s.rval("waitSize") } else # waitSizeAtStep({x}) fi ;
+eval parametric(E[ waitSizeAtStep(x) ],x,0.0,1.0,120.0);
+//sizeAtStep(x) = if { s.rval("steps") == x } then { s.rval("size") } else # sizeAtStep({x}) fi ;
+//timeAtSize(x) = if { s.rval("time") >= x } then { s.rval("size") } else # timeAtSize({x}) fi ;
