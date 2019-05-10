@@ -6,7 +6,13 @@
 
 using namespace std;
 
-int one, two, three, four, five, six = 0;
+int one = 0;
+int two = 0;
+int three = 0;
+int four = 0;
+int five = 0;
+int six = 0;
+
 int rolls_performed = 0;
 double rate = 1.0;
 double cur_time = 0.0;
@@ -32,14 +38,12 @@ void roll_dice() {
     rolls_performed++;
 }
    
-//    time_t time_now() {
-//        return time(0);
-//    }
+
 
 //increment time by number from exponential distribution, otherwise 10
 JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceWrapper_getTime(JNIEnv *env, jobject obj) {
     //time_t now = time_now();
-    jdouble sample_x = ((jdouble) rand()) / (RAND_MAX) + 1;
+    jdouble sample_x = ((jdouble) rand()) / (RAND_MAX);
     cur_time += -(log(sample_x))/rate;
     std::cout << "Native method called: getTime() " << std::endl;
     std::cout << "Time: " << cur_time << std::endl;
@@ -83,7 +87,12 @@ JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_setSimulatorForNewSimulatio
     std::cout << "Native method called: setSimulatorForNewSimulation() " << std::endl;
 
     srand(seed);
-    one, two, three, four, five, six = 0;
+    one = 0;
+	two = 0;
+	three = 0;
+	four = 0;
+	five = 0;
+	six = 0;
     rolls_performed = 0;
 
     std::cout << "Native method called: values after setSimulatorForNewSimulation()" << std::endl;
@@ -99,39 +108,6 @@ JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_setSimulatorForNewSimulatio
 JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceWrapper_rval__I(JNIEnv *env, jobject obj, jint obs) {
     std::cout << "Native method called: rval(int) " << obs << std::endl;
     jdouble ret;
-//    switch (obs) {
-//        case 1:
-//            ret = (jdouble)time_now();
-//            break;
-//        case 2:
-//            ret = steps;
-//            break;
-//        case 3:
-//            ret = one;
-//            break;
-//        case 4:
-//            ret = two;
-//            break;
-//        case 5:
-//            ret = three;
-//            break;
-//        case 6:
-//            ret = four;
-//            break;
-//        case 7:
-//            ret = five;
-//            break;
-//        case 8:
-//            ret = six;
-//            break;
-//        case 9:
-//            ret = rolls_performed;
-//            break;
-//        case 10:
-//            ret = 0.0;
-//            break;
-//    }
-    
     return ret;
 }
 

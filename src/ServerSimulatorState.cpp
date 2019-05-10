@@ -134,7 +134,7 @@ double ServerSimulatorState::sampleInterarrivalTime() {
 }
 
 void ServerSimulatorState::runSim() {
-	if (!eventQ.empty() && GT < THRESHOLD) {
+	if (!eventQ.empty() && servsim.getGT() < THRESHOLD) {
         EventStruct currentEvent = eventQ.top();
         servsim.setGT(currentEvent.eventTime);
         eventQ.pop();

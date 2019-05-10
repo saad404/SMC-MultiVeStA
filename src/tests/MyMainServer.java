@@ -6,8 +6,8 @@ import vesta.mc.ParametersForState;
 public class MyMainServer {
 	public static void main(String[] args) {
 		ServerJNISimulatorState SimuState = new ServerJNISimulatorState(new ParametersForState("none", ""));
-		int maxNumberOfEvents = 15;
-		int maxSteps = maxNumberOfEvents + 1;
+		int maxNumberOfEvents = 20;
+		int maxSteps = maxNumberOfEvents + 3;
 		for (int i = 0; i < 2; i++) {
 			for (int seed = 0; seed < 2; seed++) {
 				SimuState.setMaxNumberOfEvents(maxNumberOfEvents);
