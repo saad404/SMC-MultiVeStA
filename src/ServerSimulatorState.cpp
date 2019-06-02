@@ -53,12 +53,12 @@ struct EventStruct {
 
 //function to print events
 void printEvent(const EventStruct& event) {
-    cout << event.taskName;
-    cout << ", Time: " << event.eventTime;
-    cout << ", Duration: " << event.duration;
-    cout << ", Event type: ";
-    if (event.event == ARRIVAL) cout << "ARRIVAL";
-    else cout << "SERVED";
+   // cout << event.taskName;
+   // cout << ", Time: " << event.eventTime;
+   // cout << ", Duration: " << event.duration;
+   // cout << ", Event type: ";
+   // if (event.event == ARRIVAL) cout << "ARRIVAL";
+   // else cout << "SERVED";
 }
 
 //compare event times for list
@@ -99,18 +99,18 @@ ServerSimulatorState servsim;
 
 void ServerSimulatorState::addEvent(EventStruct & event) {
     if (debugger) {
-        cout << "[" << GT << "] Adding event: ";
+    //    cout << "[" << GT << "] Adding event: ";
         printEvent(event);
-        cout << endl;
+   //     cout << endl;
     }
     eventQ.push(event);
 }
 
 void ServerSimulatorState::addServerQueueTask(EventStruct & event) {
     if (debugger) {
-        cout << "[" << GT << "] Adding server queue task: ";
+     //   cout << "[" << GT << "] Adding server queue task: ";
         printEvent(event);
-        cout << endl;
+     //   cout << endl;
     }
     event.waitTime = GT;
     serverQueue.push(event);
@@ -118,7 +118,7 @@ void ServerSimulatorState::addServerQueueTask(EventStruct & event) {
 
 void ServerSimulatorState::printServerNumberChange() {
     if (debugger) {
-        cout << "[" << GT << "] Current number of servers available: " << serversAvailable << endl;
+     //   cout << "[" << GT << "] Current number of servers available: " << serversAvailable << endl;
     }
 }
 
@@ -262,7 +262,7 @@ JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_setSimulatorForNewSimulat
 	myEvent.duration = rand() % MAX_DURATION + 1;
 	myEvent.event = ARRIVAL;
 	servsim.addEvent(myEvent);
-	cout << "Adding " << 1 << " event. \n \n";
+	// cout << "Adding " << 1 << " event. \n \n";
 
 //	for (int i = 0; i < TEST_SIZE; i++) { //populate queue with tasks
 //		myEvent.taskName = firstNames[i] + string(" ")
