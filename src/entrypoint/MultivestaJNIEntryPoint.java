@@ -13,7 +13,7 @@ public class MultivestaJNIEntryPoint {
 					"-l", "oneLocal", 
 					"-f", "stepsAfterXSteps.quatex", 
 					"-a", "0.05", 
-					"-d1", "0.5"
+					"-d1", "0.1"
 			};
 			UniqueEntryPoint.main(mvargs);
 		}
