@@ -1,0 +1,8 @@
+oneAtStep(x) = if { s.rval("steps") == x } then { s.rval("one") } else # oneAtStep({x}) fi ;
+twoAtStep(x) = if { s.rval("steps") == x } then { s.rval("two") } else # twoAtStep({x}) fi ;
+threeAtStep(x) = if { s.rval("steps") == x } then { s.rval("three") } else # threeAtStep({x}) fi ;
+fourAtStep(x) = if { s.rval("steps") == x } then { s.rval("four") } else # fourAtStep({x}) fi ;
+fiveAtStep(x) = if { s.rval("steps") == x } then { s.rval("five") } else # fiveAtStep({x}) fi ;
+sixAtStep(x) = if { s.rval("steps") == x } then { s.rval("six") } else # sixAtStep({x}) fi ;
+eval parametric(E[ oneAtStep(x) ],E[ twoAtStep(x) ],E[ threeAtStep(x) ],E[ fourAtStep(x) ],E[ fiveAtStep(x) ],E[ sixAtStep(x) ],x,0.0,1.0,120.0);
+
