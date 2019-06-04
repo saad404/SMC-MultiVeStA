@@ -1,2 +1,2 @@
-waitsizeAtStep(x) = if { s.rval("steps") == x } then { s.rval("waitsize") } else # waitsizeAtStep({x}) fi ;
+waitsizeAtStep(x) = if { s.rval("steps") == x } then { s.rval("waitSize") } else # waitsizeAtStep({x}) fi ;
 eval parametric(E[ waitsizeAtStep(x) ],x,0.0,1.0,100.0);
