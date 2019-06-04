@@ -1,0 +1,8 @@
+Download Cygwin 
+Download packages mingw64-x86_64-gcc-core and mingw64-x86_64-gcc-g++
+Set JAVA_HOME. In environment variables set JAVA_HOME to JDK path. If JAVA_HOME is not created, then do so and add path to JDK. (program files \ Java \ JDK)
+Run:
+Installer chocolatey på din bærbar og kør choco install mingw i Powershell som administrator
+1) javac -h include jnisimulator/*.java tests/*.java -cp ../lib/multivesta.jar
+2) x86_64-w64-mingw32-g++ -I"%JAVA_HOME%\include" -I"%JAVA_HOME%\include\win32" -shared -o webserver.dll ServerSimulatorState.cpp
+3) java -cp .;C:\Users\Mads\Desktop\SMC-MultiVeStA\lib\multivesta.jar -Djava.library.path=. tests.MyMainServer
