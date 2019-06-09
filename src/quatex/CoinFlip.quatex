@@ -1,3 +1,3 @@
 headsAtStep(x) = if { s.rval("steps") == x } then { s.rval("heads") } else # headsAtStep({x}) fi ;
-tailsAtStep(x) = if { s.rval("steps") == x } then { s.rval("tails") } else # hailsAtStep({x}) fi ;
+tailsAtStep(x) = if { s.rval("steps") == x } then { s.rval("tails") } else # tailsAtStep({x}) fi ;
 eval parametric(E[ headsAtStep(x) ],E[ tailsAtStep(x) ],x,0.0,1.0,100.0);
