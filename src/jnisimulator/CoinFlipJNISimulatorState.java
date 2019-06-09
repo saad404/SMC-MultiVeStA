@@ -13,7 +13,7 @@ public class CoinFlipJNISimulatorState extends NewState {
 
 	public CoinFlipJNISimulatorState(ParametersForState parameters) {
 		super(parameters);
-		simulator = new CoinFlipWrapper(0.55);
+		simulator = new CoinFlipWrapper(0.30);
 	}
 	
 	public double getTime() {
@@ -41,6 +41,8 @@ public class CoinFlipJNISimulatorState extends NewState {
 	public double rval(String obs) {
 		if (obs.equals("steps")) {
 			return getNumberOfSteps();
+		} else if (obs.equals("time")) {
+			return getTime();
 		} else {
 			return simulator.rval(obs);
 		}
