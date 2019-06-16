@@ -7,12 +7,11 @@
 #include <jni.h>
 #include <random>
 #include <sstream>
-#include "include/jnisimulator_ServerWrapper.h"
+#include "include/mock_ServerWrapper.h"
 
 using namespace std;
 
 //define the global time data type
-//#define TimeType double
 typedef double TimeType;
 
 //define constants
@@ -20,14 +19,6 @@ typedef double TimeType;
 //const int NUM_TASKS = 6;
 //const int NUM_NAMES = 15;
 const TimeType THRESHOLD = 400.0;
-//some strings
-//string firstNames[NUM_TASKS] = {"Task","Task","Task","Task","Task","Task"};
-//string lastNames[NUM_NAMES] = {"1","2","3","4","5","6"};
-//
-//string firstNames[NUM_NAMES] =
-//    { "Alice", "Bill", "Jeff", "Susan", "Larry", "Emily" , "John", "Charlie", "Dean", "Eli", "Fabian", "Gary", "Harry", "Ian", "Kevin"};
-//string lastNames[NUM_NAMES] =
-//    { "Johnson", "Gates", "Bezos", "Wojcicki", "Ellison", "Adams" , "Wick", "Austin", "James", "Sorensen", "Rodriguez", "Lineker", "Potter", "McKellen", "Costner"};
 
 const int SIM_LENGTH = 100;
 const int MAX_DURATION = 12;
@@ -36,8 +27,7 @@ const int NUM_SERVERS = 2;
 const double AVG_INTERARRIVAL_TIME = 10;
 const double RATE_EXP = 1.0 / AVG_INTERARRIVAL_TIME;
 int serversAvailable = NUM_SERVERS;
-//TimeType GT = 0.0;
-//TimeType simulatedTime = 0.0;
+
 
 //define event types
 enum EventType {ARRIVAL, SERVED};
@@ -73,14 +63,14 @@ private:
     //event queue: pq with events queued by event time
     priority_queue<EventStruct, vector<EventStruct>, compareEventTime> eventQ;
     //wait queue: q with waiting tasks queued by arrival time
-    queue<EventStruct> serverQueue;
+    queue<EventStruct> waitQueue;
     TimeType GT = 0.0;
     bool debugger = false;
     //int serversAvailable = NUM_SERVERS;
 public:
     //TimeType GT = 0.0;
     void addEvent(EventStruct & event);
-    void addServerQueueTask(EventStruct & event);
+    void addWaitQueueTask(EventStruct & event);
     void activateDebug(bool val) { debugger = val; };
     void printServerNumberChange();
     void scheduleArrivedEvent(EventStruct & currentEvent);
@@ -106,14 +96,14 @@ void ServerSimulatorState::addEvent(EventStruct & event) {
     eventQ.push(event);
 }
 
-void ServerSimulatorState::addServerQueueTask(EventStruct & event) {
+void ServerSimulatorState::addWaitQueueTask(EventStruct & event) {
     if (debugger) {
      //   cout << "[" << GT << "] Adding server queue task: ";
         printEvent(event);
      //   cout << endl;
     }
     event.waitTime = GT;
-    serverQueue.push(event);
+    waitQueue.push(event);
 }
 
 void ServerSimulatorState::printServerNumberChange() {
@@ -134,8 +124,8 @@ void ServerSimulatorState::scheduleArrivedEvent(EventStruct & currentEvent) {
 }
 
 void ServerSimulatorState::scheduleServedEvent() {
-	EventStruct nextTask = serverQueue.front();
-	serverQueue.pop(); //fix below as done above
+	EventStruct nextTask = waitQueue.front();
+	waitQueue.pop(); //fix below as done above
 	nextTask.eventTime = servsim.getGT() + nextTask.duration;
 	//servsim.setGT(nextTask.eventTime = GT + nextEvent.duration);
 	nextTask.event = SERVED;
@@ -160,6 +150,10 @@ void ServerSimulatorState::runSim() {
 	if(servsim.getGT() >= THRESHOLD && eventQ.size() > 0) {
 		eventQ.pop();
 	}
+//	if (servsim.getGT() >= THRESHOLD && waitQueue.size() > 0) {
+//		waitQueue.pop();
+	}
+
 	if (!eventQ.empty() && servsim.getGT() < THRESHOLD) {
         EventStruct currentEvent = eventQ.top();
         servsim.setGT(currentEvent.eventTime);
@@ -183,7 +177,7 @@ void ServerSimulatorState::runSim() {
 
 				} else {
 					//no servers available
-					addServerQueueTask(currentEvent);
+					addWaitQueueTask(currentEvent);
 				}
 				//create an event that represents the arrival of the new task, add event to addEvent
 				// add if here
@@ -197,7 +191,7 @@ void ServerSimulatorState::runSim() {
             break;
         case SERVED:
         	{
-				if(!serverQueue.empty()) {
+				if(!waitQueue.empty()) {
 					// Call scheduleServedEvent(currentEvent). Don't do a static method, instance method instead.
 					scheduleServedEvent();
 					
@@ -223,7 +217,7 @@ double ServerSimulatorState::getGT() {
 }
 
 int ServerSimulatorState::getSizeOfWQ() {
-  return serverQueue.size();
+  return waitQueue.size();
 }
 
 int ServerSimulatorState::getSizeOfQ() {
@@ -232,25 +226,25 @@ int ServerSimulatorState::getSizeOfQ() {
 
 void ServerSimulatorState::resetQ() {
 	eventQ = priority_queue<EventStruct, vector<EventStruct>, compareEventTime> ();
-	serverQueue = queue<EventStruct> ();
+	waitQueue = queue<EventStruct> ();
 	serversAvailable = NUM_SERVERS;
 }
 
-JNIEXPORT jdouble JNICALL Java_jnisimulator_ServerWrapper_getTime(JNIEnv *env, jobject obj) { //advanceTime
+JNIEXPORT jdouble JNICALL Java_mock_ServerWrapper_getTime(JNIEnv *env, jobject obj) { //advanceTime
 	return servsim.getGT();
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_mock_ServerWrapper_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
 	servsim.runSim();
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_performWholeSimulation(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_mock_ServerWrapper_performWholeSimulation(JNIEnv *env, jobject obj) {
 	for(int i = 0; i < SIM_LENGTH; i++) {
 		servsim.runSim();
 	}
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
+JNIEXPORT void JNICALL Java_mock_ServerWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
 	srand(seed);
 	servsim.resetQ();
 	servsim.setGT(0.0);
@@ -275,7 +269,7 @@ JNIEXPORT void JNICALL Java_jnisimulator_ServerWrapper_setSimulatorForNewSimulat
 //	}
 }
 
-JNIEXPORT jdouble JNICALL Java_jnisimulator_ServerWrapper_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
+JNIEXPORT jdouble JNICALL Java_mock_ServerWrapper_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
 	jdouble ret = 0.0;
     const char *path = env -> GetStringUTFChars(obs, NULL);
     env -> ReleaseStringUTFChars(obs, NULL);
@@ -285,7 +279,7 @@ JNIEXPORT jdouble JNICALL Java_jnisimulator_ServerWrapper_rval__Ljava_lang_Strin
     }
     if(strcmp(path, "waitSize") == 0) {
 	// WQ = Waiting Queue
-	ret = servsim.getSizeOfWQ();
+    	ret = servsim.getSizeOfWQ();
     }
     return ret;
 }

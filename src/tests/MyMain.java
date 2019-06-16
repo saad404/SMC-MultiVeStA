@@ -1,12 +1,11 @@
 package tests;
 
-import jnisimulator.CoinFlipJNISimulatorState;
-
+import mock.CoinFlipMockSimState;
 import vesta.mc.ParametersForState;
 
 public class MyMain {
 	public static void main(String[] args) {
-		CoinFlipJNISimulatorState SimuState = new CoinFlipJNISimulatorState(new ParametersForState("none", ""));
+		CoinFlipMockSimState SimuState = new CoinFlipMockSimState(new ParametersForState("none", ""));
 		for (int i = 0; i < 2; i++) {
 			for (int seed = 0; seed < 2; seed++) {
 				SimuState.setSimulatorForNewSimulation(seed);
@@ -18,9 +17,7 @@ public class MyMain {
 					System.out.println("\tCurrent heads are: " + SimuState.rval("heads"));
 					System.out.println("\tCurrent tails are: " + SimuState.rval("tails"));
 					System.out.println("Current flips performed are: " + SimuState.rval("flips_performed"));
-//					SimuState.performWholeSimulation();
-//					SimuState.rval(1);
-//					SimuState.rval("1");
+
 				}
 				
 			}

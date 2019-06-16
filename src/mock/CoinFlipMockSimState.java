@@ -1,9 +1,9 @@
-package jnisimulator;
+package mock;
 
 import vesta.mc.NewState;
 import vesta.mc.ParametersForState;
 
-public class CoinFlipJNISimulatorState extends NewState {
+public class CoinFlipMockSimState extends NewState {
 	
 	static {
 		System.loadLibrary("coinflib");
@@ -11,7 +11,7 @@ public class CoinFlipJNISimulatorState extends NewState {
 	
 	private CoinFlipWrapper simulator;
 
-	public CoinFlipJNISimulatorState(ParametersForState parameters) {
+	public CoinFlipMockSimState(ParametersForState parameters) {
 		super(parameters);
 		simulator = new CoinFlipWrapper(0.55);
 	}
@@ -38,7 +38,7 @@ public class CoinFlipJNISimulatorState extends NewState {
 		return simulator.rval(obs);
 	}
 
-	public double rval(String obs) {
+	public double rval(String obs) { 
 		if (obs.equals("steps")) {
 			return getNumberOfSteps();
 		} else {

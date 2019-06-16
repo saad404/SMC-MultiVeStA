@@ -1,11 +1,11 @@
 package tests;
 
-import jnisimulator.ServerJNISimulatorState;
+import mock.ServerMockSimState;
 import vesta.mc.ParametersForState;
 
 public class MyMainServer {
 	public static void main(String[] args) {
-		ServerJNISimulatorState SimuState = new ServerJNISimulatorState(new ParametersForState("none", ""));
+		ServerMockSimState SimuState = new ServerMockSimState(new ParametersForState("none", ""));
 		for (int i = 0; i < 2; i++) {
 			for (int seed = 0; seed < 2; seed++) {
 				SimuState.setSimulatorForNewSimulation(seed);

@@ -1,11 +1,11 @@
 package tests;
 
-import jnisimulator.*;
+import mock.*;
 import vesta.mc.ParametersForState;
 
 public class MyMainDice {
 	public static void main(String[] args) {
-		DiceJNISimulatorState SimuState = new DiceJNISimulatorState(new ParametersForState("none", ""));
+		DiceMockSimState SimuState = new DiceMockSimState(new ParametersForState("none", ""));
 		for (int i = 0; i < 2; i++) {
 			for (int seed = 0; seed < 2; seed++) {
 				SimuState.setSimulatorForNewSimulation(seed);

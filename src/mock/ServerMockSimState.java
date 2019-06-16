@@ -1,28 +1,26 @@
-package jnisimulator;
+package mock;
 
 import vesta.mc.NewState;
 import vesta.mc.ParametersForState;
 
-public class DiceJNISimulatorState extends NewState {
-	
+public class ServerMockSimState extends NewState {
 	static {
-		System.loadLibrary("diceroll");
+		System.loadLibrary("webserver");
 	}
 	
-	private DiceWrapper simulator;
+	private ServerWrapper simulator;
 	
-	public DiceJNISimulatorState(ParametersForState parameters) {
+	public ServerMockSimState(ParametersForState parameters) {
 		super(parameters);
-		simulator = new DiceWrapper();
+		simulator = new ServerWrapper();
 	}
 	
 	public double getTime() {
 		return simulator.getTime();
 	}
-
+	
 	public void performOneStepOfSimulation() {
 		simulator.performOneStepOfSimulation();
-
 	}
 	
 	public void performWholeSimulation() {
@@ -34,14 +32,14 @@ public class DiceJNISimulatorState extends NewState {
 	}
 	
 	public double rval(int obs) {
-
 		return simulator.rval(obs);
-		
 	}
-
+	
 	public double rval(String obs) {
 		if (obs.equals("steps")) {
 			return getNumberOfSteps();
+		} else if (obs.equals("time")) {
+			return getTime();
 		} else {
 			return simulator.rval(obs);
 		}

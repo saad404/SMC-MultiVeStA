@@ -1,6 +1,6 @@
 #include <jni.h>
 #include <iostream>
-#include "include/jnisimulator_DiceWrapper.h"
+#include "include/mock_DiceWrapper.h"
 #include <random>
 #include <string.h>
 
@@ -41,16 +41,16 @@ void roll_dice() {
 
 
 //increment time by number from exponential distribution, otherwise 10
-JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceWrapper_getTime(JNIEnv *env, jobject obj) {
+JNIEXPORT jdouble JNICALL Java_mock_DiceWrapper_getTime(JNIEnv *env, jobject obj) {
     //time_t now = time_now();
-    jdouble sample_x = ((jdouble) rand()) / (RAND_MAX) + 1;
+    jdouble sample_x = ((jdouble) rand()) / (RAND_MAX);
     cur_time += -(log(sample_x))/rate;
     std::cout << "Native method called: getTime() " << std::endl;
     std::cout << "Time: " << cur_time << std::endl;
     return cur_time;
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_mock_DiceWrapper_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
     std::cout << "Native method called: performOneStepOfSimulation() " << std::endl;
 
     roll_dice();
@@ -65,7 +65,7 @@ JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_performOneStepOfSimulation(
 
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_performWholeSimulation(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_mock_DiceWrapper_performWholeSimulation(JNIEnv *env, jobject obj) {
     std::cout << "Native method called: performWholeSimulation() " << std::endl;
 
     for (int i = 0; i < no_steps; i++) {
@@ -83,7 +83,7 @@ JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_performWholeSimulation(JNIE
 
 }
 
-JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
+JNIEXPORT void JNICALL Java_mock_DiceWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
     std::cout << "Native method called: setSimulatorForNewSimulation() " << std::endl;
 
     srand(seed);
@@ -94,6 +94,7 @@ JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_setSimulatorForNewSimulatio
 	five = 0;
 	six = 0;
     rolls_performed = 0;
+    cur_time = 0.0;
 
     std::cout << "Native method called: values after setSimulatorForNewSimulation()" << std::endl;
     std::cout << "\trolled one: " << one << std::endl;
@@ -105,13 +106,13 @@ JNIEXPORT void JNICALL Java_jnisimulator_DiceWrapper_setSimulatorForNewSimulatio
     std::cout << "\trolls performed: " << rolls_performed << std::endl;
 }
 
-JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceWrapper_rval__I(JNIEnv *env, jobject obj, jint obs) {
+JNIEXPORT jdouble JNICALL Java_mock_DiceWrapper_rval__I(JNIEnv *env, jobject obj, jint obs) {
     std::cout << "Native method called: rval(int) " << obs << std::endl;
     jdouble ret;
     return ret;
 }
 
-JNIEXPORT jdouble JNICALL Java_jnisimulator_DiceWrapper_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
+JNIEXPORT jdouble JNICALL Java_mock_DiceWrapper_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
     jdouble ret = 0.0;
     const char *path = env -> GetStringUTFChars(obs, NULL);
     std::cout << "Native method called: rval(string) " << path << std::endl;
