@@ -1,6 +1,6 @@
-package mock;
+package jnilayer;
 
-public class DiceWrapper {
+public class ServerWrapper {
 	
 	public native double getTime();
 	public native void performOneStepOfSimulation();
@@ -8,7 +8,5 @@ public class DiceWrapper {
 	public native void setSimulatorForNewSimulation(int seed);
 	public native double rval(int obs);
 	public native double rval(String obs);
-	
 
 }
-

@@ -1,9 +1,9 @@
-package mock;
+package jnilayer;
 
 import vesta.mc.NewState;
 import vesta.mc.ParametersForState;
 
-public class DiceMockSimState extends NewState {
+public class DiceJNISimState extends NewState {
 	
 	static {
 		System.loadLibrary("diceroll");
@@ -11,7 +11,7 @@ public class DiceMockSimState extends NewState {
 	
 	private DiceWrapper simulator;
 	
-	public DiceMockSimState(ParametersForState parameters) {
+	public DiceJNISimState(ParametersForState parameters) {
 		super(parameters);
 		simulator = new DiceWrapper();
 	}

@@ -1,48 +1,51 @@
-package mock;
+package jnilayer;
 
 import vesta.mc.NewState;
 import vesta.mc.ParametersForState;
 
-public class ServerMockSimState extends NewState {
+public class CoinFlipJNISimState extends NewState {
+	
 	static {
-		System.loadLibrary("webserver");
+		System.loadLibrary("coinflib");
 	}
 	
-	private ServerWrapper simulator;
-	
-	public ServerMockSimState(ParametersForState parameters) {
+	private CoinFlipWrapper simulator;
+
+	public CoinFlipJNISimState(ParametersForState parameters) {
 		super(parameters);
-		simulator = new ServerWrapper();
+		simulator = new CoinFlipWrapper(0.55);
 	}
 	
 	public double getTime() {
 		return simulator.getTime();
 	}
-	
+
 	public void performOneStepOfSimulation() {
 		simulator.performOneStepOfSimulation();
+		//incrementNumberOfSteps(); //increments steps for the both iterations, so will run 16 times
 	}
-	
+
 	public void performWholeSimulation() {
 		simulator.performWholeSimulation();
+		//setNumberOfSteps(10); // needs to be setup in C++ side as well
 	}
-	
+
 	public void setSimulatorForNewSimulation(int seed) {
 		simulator.setSimulatorForNewSimulation(seed);
 	}
-	
+
 	public double rval(int obs) {
 		return simulator.rval(obs);
 	}
-	
-	public double rval(String obs) {
+
+	public double rval(String obs) { 
 		if (obs.equals("steps")) {
 			return getNumberOfSteps();
-		} else if (obs.equals("time")) {
-			return getTime();
 		} else {
 			return simulator.rval(obs);
 		}
 	}
+	
+	
 
 }

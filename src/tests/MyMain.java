@@ -1,11 +1,11 @@
 package tests;
 
-import mock.CoinFlipMockSimState;
+import jnilayer.CoinFlipJNISimState;
 import vesta.mc.ParametersForState;
 
 public class MyMain {
 	public static void main(String[] args) {
-		CoinFlipMockSimState SimuState = new CoinFlipMockSimState(new ParametersForState("none", ""));
+		CoinFlipJNISimState SimuState = new CoinFlipJNISimState(new ParametersForState("none", ""));
 		for (int i = 0; i < 2; i++) {
 			for (int seed = 0; seed < 2; seed++) {
 				SimuState.setSimulatorForNewSimulation(seed);

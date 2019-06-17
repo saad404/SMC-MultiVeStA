@@ -8,7 +8,7 @@ public class MultivestaJNIEntryPoint {
 			String[] mvargs = {
 					"-c", 
 					"-sm", "false", 
-					"-sd", "mock.ServerMockSimState",
+					"-sd", "jnilayer.ServerJNISimState",
 					"-bs", "20", 
 					"-l", "oneLocal", 
 					"-f", "Server.quatex", 

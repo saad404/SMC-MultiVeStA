@@ -7,7 +7,7 @@
 #include <jni.h>
 #include <random>
 #include <sstream>
-#include "include/mock_ServerWrapper.h"
+#include "include/jnilayer_ServerWrapper.h"
 
 using namespace std;
 
@@ -24,7 +24,7 @@ const int SIM_LENGTH = 100;
 const int MAX_DURATION = 12;
 const int NUM_SERVERS = 2;
 // AVG_INTERARRIVAL_TIME -> 0 = "udskyder" tidspunktet hvor size() = 0
-const double AVG_INTERARRIVAL_TIME = 10;
+const double AVG_INTERARRIVAL_TIME = 7.5;
 const double RATE_EXP = 1.0 / AVG_INTERARRIVAL_TIME;
 int serversAvailable = NUM_SERVERS;
 
@@ -147,11 +147,11 @@ double ServerSimulatorState::sampleInterarrivalTime() {
 void ServerSimulatorState::runSim() {
 	// try to move if-statement at nextArrival and see if it works.
 	// It doesn't work. It will pop until size = 1 and then stop instead of 0.
-	if(servsim.getGT() >= THRESHOLD && eventQ.size() > 0) {
-		eventQ.pop();
-	}
-//	if (servsim.getGT() >= THRESHOLD && waitQueue.size() > 0) {
-//		waitQueue.pop();
+//	if(servsim.getGT() >= THRESHOLD && eventQ.size() > 0) {
+//		eventQ.pop();
+//	}
+	if (servsim.getGT() >= THRESHOLD && waitQueue.size() > 0) {
+		waitQueue.pop();
 	}
 
 	if (!eventQ.empty() && servsim.getGT() < THRESHOLD) {
@@ -161,7 +161,7 @@ void ServerSimulatorState::runSim() {
         switch (currentEvent.event) {
         case ARRIVAL:
         	{ //when a task arrives, schedule arrival of new task and serve task
-				if (serversAvailable) {
+				if (serversAvailable > 0) {
 					scheduleArrivedEvent(currentEvent);
 					//EventStruct servedEvent;
 					//servsim.setGT(servedEvent.eventTime = GT + nextEvent.duration);
@@ -230,21 +230,21 @@ void ServerSimulatorState::resetQ() {
 	serversAvailable = NUM_SERVERS;
 }
 
-JNIEXPORT jdouble JNICALL Java_mock_ServerWrapper_getTime(JNIEnv *env, jobject obj) { //advanceTime
+JNIEXPORT jdouble JNICALL Java_jnilayer_ServerWrapper_getTime(JNIEnv *env, jobject obj) { //advanceTime
 	return servsim.getGT();
 }
 
-JNIEXPORT void JNICALL Java_mock_ServerWrapper_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_jnilayer_ServerWrapper_performOneStepOfSimulation(JNIEnv *env, jobject obj) {
 	servsim.runSim();
 }
 
-JNIEXPORT void JNICALL Java_mock_ServerWrapper_performWholeSimulation(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_jnilayer_ServerWrapper_performWholeSimulation(JNIEnv *env, jobject obj) {
 	for(int i = 0; i < SIM_LENGTH; i++) {
 		servsim.runSim();
 	}
 }
 
-JNIEXPORT void JNICALL Java_mock_ServerWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
+JNIEXPORT void JNICALL Java_jnilayer_ServerWrapper_setSimulatorForNewSimulation(JNIEnv *env, jobject obj, jint seed) {
 	srand(seed);
 	servsim.resetQ();
 	servsim.setGT(0.0);
@@ -269,7 +269,7 @@ JNIEXPORT void JNICALL Java_mock_ServerWrapper_setSimulatorForNewSimulation(JNIE
 //	}
 }
 
-JNIEXPORT jdouble JNICALL Java_mock_ServerWrapper_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
+JNIEXPORT jdouble JNICALL Java_jnilayer_ServerWrapper_rval__Ljava_lang_String_2(JNIEnv *env, jobject obj, jstring obs) {
 	jdouble ret = 0.0;
     const char *path = env -> GetStringUTFChars(obs, NULL);
     env -> ReleaseStringUTFChars(obs, NULL);
